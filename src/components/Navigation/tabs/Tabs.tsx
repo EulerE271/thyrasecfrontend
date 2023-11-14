@@ -1,7 +1,25 @@
 // Tabs.tsx
-import React, { useState } from 'react';
-import { Tabs, Tab, Box } from '@mui/material';
+import React, { useState } from "react";
+import { Tabs, Tab, Box, styled } from "@mui/material";
 
+// Styled components
+const StyledTabs = styled(Tabs)({
+  "& .MuiTabs-indicator": {
+    backgroundColor: "#38b2ac", // Custom indicator color
+  },
+});
+
+const StyledTab = styled(Tab)({
+  fontWeight: "bold",
+  "&:hover": {
+    color: "#38b2ac", // Custom hover color
+  },
+  "&.Mui-selected": {
+    color: "#38b2ac", // Custom selected color
+  },
+});
+
+// TabPanel function
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -24,6 +42,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+// InstrumentTabs component
 const InstrumentTabs: React.FC = () => {
   const [value, setValue] = useState(0);
 
@@ -33,11 +52,15 @@ const InstrumentTabs: React.FC = () => {
 
   return (
     <div>
-      <Tabs value={value} onChange={handleChange} aria-label="instrument tabs">
-        <Tab label="Stocks" />
-        <Tab label="Funds" />
-        <Tab label="Bonds" />
-      </Tabs>
+      <StyledTabs
+        value={value}
+        onChange={handleChange}
+        aria-label="instrument tabs"
+      >
+        <StyledTab label="Stocks" />
+        <StyledTab label="Funds" />
+        <StyledTab label="Bonds" />
+      </StyledTabs>
       <TabPanel value={value} index={0}>
         Stocks Content
       </TabPanel>

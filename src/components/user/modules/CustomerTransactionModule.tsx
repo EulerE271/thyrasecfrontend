@@ -45,7 +45,7 @@ interface BasicTableProps {
 export default function BasicTable({ accountId }: BasicTableProps) {
   const [rows, setRows] = useState<Row[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const navigate = useNavigate();
 
   const columns: GridColDef[] = [

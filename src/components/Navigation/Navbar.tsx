@@ -1,6 +1,19 @@
 // Navbar.tsx
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, styled } from '@mui/material';
+
+const StyledMenu = styled(Menu)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    backgroundColor: '#1a202c', // Custom background color
+    color: 'white',
+    borderRadius: '8px',
+  },
+  '& .MuiMenuItem-root': {
+    '&:hover': {
+      backgroundColor: '#2d3748', // Custom hover color
+    },
+  },
+}));
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -14,7 +27,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" style={{ backgroundColor: '#2d3748' }}> {/* Custom AppBar color */}
       <Toolbar>
         <Typography variant="h6" className="flex-grow">
           Fintech App
@@ -23,7 +36,7 @@ const Navbar: React.FC = () => {
         <Button color="inherit" onClick={handleMenu}>
           Instruments
         </Button>
-        <Menu
+        <StyledMenu
           id="menu-appbar"
           anchorEl={anchorEl}
           keepMounted
@@ -33,7 +46,7 @@ const Navbar: React.FC = () => {
           <MenuItem onClick={handleClose}>Stocks</MenuItem>
           <MenuItem onClick={handleClose}>Funds</MenuItem>
           <MenuItem onClick={handleClose}>Bonds</MenuItem>
-        </Menu>
+        </StyledMenu>
       </Toolbar>
     </AppBar>
   );
