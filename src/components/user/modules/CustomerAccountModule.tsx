@@ -7,6 +7,7 @@ import { Menu, MenuItem } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import MoreVertIcon from "@mui/icons-material/MoreVert"; // Assuming you want a vertical menu icon
 import { IconButton } from "@mui/material";
+import axios from "axios";
 
 // Define the type for your account data
 interface Account {
@@ -111,17 +112,15 @@ const CustomerAccountModule: React.FC<BasicTableProps> = () => {
   ];
 
   useEffect(() => {
-    fetch(`/v1/user/${id}/accounts`, {
-      method: "GET",
-      credentials: "include", // This ensures cookies (like the JWT token) are sent with the request
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    axios
+      .get(`/v1/user/${id}/accounts`, { withCredentials: true })
+      .then((response) => {
+        const data = response.data;
         if (Array.isArray(data)) {
           setAccounts(data);
         } else {
           console.error("Received data is not an array:", data);
-          setAccounts([]); // Optional: Set to an empty array if the data is not in the expected format
+          setAccounts([]); // Set to an empty array if the data is not in the expected format
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -132,7 +131,7 @@ const CustomerAccountModule: React.FC<BasicTableProps> = () => {
   };
 
   return (
-    <div style={{ height: 600, width: "100%" }}>
+    <div>
       <Button
         variant="contained"
         color="primary"

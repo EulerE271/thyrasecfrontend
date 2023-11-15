@@ -29,7 +29,7 @@ const AccountTypesModal: React.FC<AccountTypesModalProps> = ({
   useEffect(() => {
     if (open) {
       axios
-        .get("http://localhost:8083/v1/fetch/account-types", {
+        .get("v1/account-types", {
           withCredentials: true,
         })
         .then((response) => {

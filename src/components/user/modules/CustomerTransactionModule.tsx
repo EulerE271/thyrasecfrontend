@@ -157,7 +157,7 @@ export default function BasicTable({ accountId }: BasicTableProps) {
   };
 
   return (
-    <div style={{ height: 600, width: "100%" }}>
+    <div>
       <Button
         variant="contained"
         color="primary"

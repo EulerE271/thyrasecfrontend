@@ -10,6 +10,7 @@ import MainLayout from './components/Layouts/MainLayout';
 import AccountTableView from './pages/Tables/AccountTableView';
 import TransactionTableView from './pages/Tables/TransactionTableView';
 import InstrumentTableView from './pages/Tables/InstrumentTableView';
+import OrderTableView from './pages/Tables/OrderTableView';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
               <Route path="/accounts" element={<PrivateRoute element={<AccountTableView />} />} />
               <Route path="/transactions" element={<PrivateRoute element={<TransactionTableView />} />} />
               <Route path="/instruments" element={<PrivateRoute element={<InstrumentTableView />} />} />
+              <Route path="/orders" element={<PrivateRoute element={<OrderTableView />} />} />
             </Routes>
           </MainLayout>
         } />

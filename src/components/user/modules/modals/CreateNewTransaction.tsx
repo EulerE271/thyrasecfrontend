@@ -60,7 +60,7 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
   useEffect(() => {
     if (open) {
       axios
-        .get(`http://localhost:8083/v1/fetch/user/${userId}/accounts`, {
+        .get(`v1/user/${userId}/accounts`, {
           withCredentials: true,
         })
         .then((response) => {
@@ -76,7 +76,7 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
   useEffect(() => {
     if (open) {
       axios
-        .get("http://localhost:8082/v1/transaction/types", {
+        .get("v1/transaction/types", {
           withCredentials: true,
         })
         .then((response) => {
@@ -104,8 +104,8 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
 
     const endpoint =
       transactionType === "Deposit"
-        ? "/create/transactions/deposit"
-        : "/create/transactions/withdrawal";
+        ? "/transaction/create/deposit"
+        : "/transaction/create/withdrawal";
 
     const transactionTypeId =
       transactionType.toLowerCase() === "deposit"
@@ -114,7 +114,7 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
 
     axios
       .post(
-        `http://localhost:8082/v1${endpoint}`, // Use the dynamic endpoint
+        `v1${endpoint}`, // Use the dynamic endpoint
         {
           transaction_owner_id: userId,
           account_owner_id: userId,

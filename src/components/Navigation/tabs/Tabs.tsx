@@ -51,7 +51,7 @@ const InstrumentTabs: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-500">
       <StyledTabs
         value={value}
         onChange={handleChange}

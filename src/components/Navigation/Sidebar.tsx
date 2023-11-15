@@ -84,6 +84,7 @@ const Sidebar = () => {
     { title: "Accounts", route: "/accounts" }, // example
     { title: "Transactions", route: "/transactions" }, // example
     { title: "Instruments", route: "/instruments" }, // example
+    { title: "Orders", route: "/orders" },
     // ... add more menu items with their respective routes
   ];
 
