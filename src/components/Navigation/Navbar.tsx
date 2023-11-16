@@ -1,97 +1,83 @@
-import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Menu,
-  MenuItem,
-  styled,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import { Tabs, Menu } from "antd";
+import AccountTableView from "../../pages/Tables/AccountTableView";
+import Dashboard from "../../pages/Dashboard";
+import Home from "../../pages/Home";
 
-const StyledMenu = styled(Menu)(({ theme }) => ({
-  "& .MuiPaper-root": {
-    backgroundColor: "#1a202c", // Custom background color
-    color: "white",
-    borderRadius: "8px",
-  },
-  "& .MuiMenuItem-root": {
-    "&:hover": {
-      backgroundColor: "#2d3748", // Custom hover color
-    },
-  },
-}));
+// Example components to render in tabs
 
-const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [openOrders, setOpenOrders] = useState(false);
-  const navigate = useNavigate(); // Hook for navigation
+const Navbar: React.FC = () => {
+  const [activeKey, setActiveKey] = useState("");
+  const [items, setItems] = useState([]);
+  const newTabIndex = useRef(0);
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const onChange = (key: string) => {
+    setActiveKey(key);
   };
 
-  const handleOrders = (event: React.MouseEvent<HTMLElement>) => {
-    setOpenOrders((prev) => !prev);
+  const addTab = (label: string, Component: React.ReactNode) => {
+    const newActiveKey = `newTab${newTabIndex.current++}`;
+    setItems([...items, { label, children: Component, key: newActiveKey }]);
+    setActiveKey(newActiveKey);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-    setOpenOrders(false);
+  const onDropdownMenuClick = ({ key, domEvent }) => {
+    domEvent.stopPropagation(); // Prevents the navbar menu item click
+
+    let Component;
+    switch (key) {
+      case "Accounts":
+        Component = <AccountTableView />;
+        break;
+      case "Option2":
+        Component = <ComponentTwo />;
+        break;
+      default:
+        Component = <div>Default Content</div>;
+    }
+    addTab(`${key}`, Component);
   };
+
+  const menu = (
+    <Menu onClick={onDropdownMenuClick} className="bg-white">
+      <Menu.Item key="Accounts">Accounts View</Menu.Item>
+      <Menu.Item key="Option2">Option 2</Menu.Item>
+      {/* Add more dropdown items as needed */}
+    </Menu>
+  );
 
   return (
-    <AppBar position="static" style={{ backgroundColor: "#2d3748" }}>
-      <Toolbar>
-        <Typography variant="h6" className="flex-grow">
-          Fintech App
-        </Typography>
-        <Button color="inherit">Dashboard</Button>
-        <Button color="inherit" onClick={handleMenu}>
-          Instruments
-        </Button>
-        <Button color="inherit" onClick={handleMenu}>
-          Orders
-        </Button>
-        <StyledMenu
-          id="menu-appbar"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={handleClose}>Stocks</MenuItem>
-          <MenuItem onClick={handleClose}>Funds</MenuItem>
-          <MenuItem onClick={handleClose}>Bonds</MenuItem>
-          <MenuItem
-            onClick={handleOrders}
-            onMouseOver={handleOrders}
-          >
-            Orders
-            <StyledMenu
-              id="orders-submenu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={openOrders}
-              onClose={() => setOpenOrders(false)}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-            >
-              <MenuItem onClick={handleClose}>Trade 1</MenuItem>
-              <MenuItem onClick={handleClose}>Trade 2</MenuItem>
-              {/* ...more second-level items */}
-            </StyledMenu>
-          </MenuItem>
-        </StyledMenu>
-      </Toolbar>
-    </AppBar>
+    <div className="w-full">
+      <Menu mode="horizontal" className="bg-gray-100">
+        <Menu.SubMenu key="SubMenu" title="Accounts" popupOffset={[0, 0]}>
+          {menu}
+        </Menu.SubMenu>
+        <Menu.SubMenu key="InstrumentMenu" title="Instruments" popupOffset={[0, 0]}>
+          {menu}
+        </Menu.SubMenu>
+        {/* Add more navbar items as needed */}
+      </Menu>
+
+      {items.length === 0 ? (
+        <Home />
+      ) : (
+        <Tabs
+          hideAdd
+          onChange={onChange}
+          activeKey={activeKey}
+          type="editable-card"
+          onEdit={(targetKey, action) => {
+            if (action === "remove") {
+              const newPanes = items.filter((pane) => pane.key !== targetKey);
+              setActiveKey(newPanes.length ? newPanes[0].key : "");
+              setItems(newPanes);
+            }
+          }}
+          items={items}
+          className="w-full"
+        />
+      )}
+    </div>
   );
 };
 

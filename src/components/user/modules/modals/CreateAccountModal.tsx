@@ -69,7 +69,7 @@ const NewAccountModal: React.FC<NewAccountModalProps> = ({
 
     // Post the data
     axios
-      .post("http://localhost:8083/v1/create/account", accountData, {
+      .post("v1/create/account", accountData, {
         withCredentials: true,
       })
       .then((response) => {

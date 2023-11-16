@@ -57,7 +57,6 @@ const CreateNewUserModal: React.FC<CreateNewUserModalProps> = ({
     };
 
     // Define the base URL
-    const baseUrl = "http://localhost:8080/api/register";
 
     // Set the endpoint based on the role
     let endpoint = "";
@@ -78,7 +77,7 @@ const CreateNewUserModal: React.FC<CreateNewUserModalProps> = ({
 
     try {
       // Post the data to the specific endpoint based on the role
-      const response = await axios.post(`${baseUrl}${endpoint}`, userData, {
+      const response = await axios.post(`v1/register${endpoint}`, userData, {
         withCredentials: true,
       });
       onUserCreated(response.data);

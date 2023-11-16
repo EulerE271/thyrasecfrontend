@@ -10,13 +10,17 @@ import InfoIcon from "@mui/icons-material/Info";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { IconButton } from "@mui/material";
 import ConfirmationModal from "../../Modals/ConfirmModal";
+import SettlementModal from "../../Modals/Orders/SettlementModal";
 
 export default function OrdersTable() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedOrder, setSelectedOrder] = React.useState(null);
   const [orders, setOrders] = React.useState([]);
-  const [nextStatus, setNextStatus] = React.useState('');
+  const [nextStatus, setNextStatus] = React.useState("");
+  const [settlementModalOpen, setSettlementModalOpen] = React.useState(false);
+  const [selectedOrderForSettlement, setSelectedOrderForSettlement] =
+    React.useState(null);
 
   const columns: GridColDef[] = [
     {
@@ -43,7 +47,7 @@ export default function OrdersTable() {
             case "created":
               additionalMenuItem = (
                 <MenuItem
-                  onClick={() => handleOpenModal(params.row, "confirmed")}
+                  onClick={() => handleOpenModal(params.row, "confirm")}
                 >
                   Confirm
                 </MenuItem>
@@ -52,9 +56,16 @@ export default function OrdersTable() {
             case "confirmed":
               additionalMenuItem = (
                 <MenuItem
-                  onClick={() => handleOpenModal(params.row, "executed")}
+                  onClick={() => handleOpenModal(params.row, "execute")}
                 >
                   Execute
+                </MenuItem>
+              );
+              break;
+            case "executed":
+              additionalMenuItem = (
+                <MenuItem onClick={() => handleOpenSettlementModal(params.row)}>
+                  Settle
                 </MenuItem>
               );
               break;
@@ -116,6 +127,15 @@ export default function OrdersTable() {
     setIsModalOpen(true);
   };
 
+  const handleOpenSettlementModal = (order) => {
+    setSelectedOrderForSettlement(order); // Set the selected order for settlement
+    setSettlementModalOpen(true); // Open the settlement modal
+  };
+
+  const handleSettlementComplete = (settlementDetails) => {
+    console.log("Settlement completed:", settlementDetails);
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -142,27 +162,25 @@ export default function OrdersTable() {
     fetchOrders();
   }, []);
 
-  const handleUpdateStatus = async (orderId: any, newStatus: string) => {
+  const handleUpdateStatus = async (orderId, newStatus) => {
     try {
-      // Send a request to the server to update the order status
       await axios.put(
-        `/v1/orders/${orderId}/status`,
+        `/v1/orders/${orderId}/${newStatus}`,
         { status: newStatus },
         { withCredentials: true }
       );
-      // Optionally, refresh the data or give user feedback
-      // fetchData(); // If you have a method to fetch data
-      alert("Order status updated successfully");
+      // Refresh data or notify user
+      // Optionally, refresh orders list to reflect the changes
+      fetchOrders();
     } catch (error) {
       console.error("Failed to update order status", error);
-      alert("Error updating order status");
     }
   };
 
   return (
     <>
       <ThemeProvider theme={theme}>
-        <div style={{ height: 600, width: "100%" }}>
+        <div>
           <DataGrid
             rows={orders}
             columns={columns}
@@ -187,6 +205,12 @@ export default function OrdersTable() {
         } Action`}
         content={`Are you sure you want to ${nextStatus} this order?`}
         onConfirm={handleConfirmAction}
+      />
+      <SettlementModal
+        open={settlementModalOpen}
+        order={selectedOrderForSettlement}
+        onClose={() => setSettlementModalOpen(false)}
+        onSettlementComplete={handleSettlementComplete}
       />
     </>
   );
