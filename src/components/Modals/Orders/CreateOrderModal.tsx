@@ -30,6 +30,7 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [isDiscrepancy, setIsDiscrepancy] = useState(false);
+  const [manualTotalAmount, setManualTotalAmount] = useState(false); // New state to track if totalAmount was manually set
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -119,17 +120,29 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
   };
 
   useEffect(() => {
-    const calculatedTotal = orderDetails.quantity * orderDetails.pricePerUnit;
-    if (calculatedTotal !== orderDetails.totalAmount) {
-      setIsDiscrepancy(true);
-    } else {
-      setIsDiscrepancy(false);
+    // Auto-update totalAmount only if it wasn't manually set
+    if (!manualTotalAmount) {
+      const calculatedTotal = orderDetails.quantity * orderDetails.pricePerUnit;
+      setOrderDetails((prevDetails) => ({
+        ...prevDetails,
+        totalAmount: calculatedTotal,
+      }));
     }
+  }, [orderDetails.quantity, orderDetails.pricePerUnit, manualTotalAmount]);
+
+  useEffect(() => {
+    const calculatedTotal = orderDetails.quantity * orderDetails.pricePerUnit;
+    setIsDiscrepancy(calculatedTotal !== orderDetails.totalAmount);
   }, [
+    orderDetails.totalAmount,
     orderDetails.quantity,
     orderDetails.pricePerUnit,
-    orderDetails.totalAmount,
   ]);
+
+  const handleTotalAmountChange = (e) => {
+    setManualTotalAmount(true); // Set flag to true as totalAmount is manually changed
+    setOrderDetails({ ...orderDetails, totalAmount: Number(e.target.value) });
+  };
 
   return (
     <>
@@ -184,12 +197,12 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
             helperText={errors.pricePerUnit}
             margin="dense"
             name="orderAmount"
-            label="Order ammount"
+            label="Order Amount"
             type="number"
             fullWidth
             variant="outlined"
-            value={orderDetails.orderAmount}
-            onChange={handleChange}
+            value={orderDetails.totalAmount}
+            onChange={handleTotalAmountChange} // Update to use the new handler
           />
           <TextField
             error={!!errors.instrument}
