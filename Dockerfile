@@ -1,20 +1,23 @@
 # Use an official Node.js runtime as a parent image
-FROM node:14
+FROM node:14 as builder
 
-# Set the working directory to /app
-WORKDIR /frontend
+# Set the working directory
+WORKDIR /Mjölnir
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install app dependencies
+# Install dependencies
 RUN npm install
 
-# Copy all source code to the working directory
+# Copy source code
 COPY . .
 
-# Make port 5173 available to the world outside this container
-EXPOSE 5173
+ARG VITE_THYRA_API_URL
 
-# Define the command to run your application
-CMD [ "npm", "run", "dev" ]
+ENV VITE_THYRA_API_URL=$VITE_THYRA_API_URL
+
+# Build the app
+RUN npm run build
+
+# No need for a second stage here since we're using shared volumes
