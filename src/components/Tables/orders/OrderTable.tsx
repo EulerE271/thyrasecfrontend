@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@emotion/react";
 import theme from "../../utils/MuiTheme";
 import Menu from "@mui/material/Menu";
@@ -12,10 +12,16 @@ import { IconButton } from "@mui/material";
 import ConfirmationModal from "../../Modals/ConfirmModal";
 import SettlementModal from "../../Modals/Orders/SettlementModal";
 
+
+interface Order {
+  id: string;
+  // Include other properties of the order as needed
+}
+
 export default function OrdersTable() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedOrder, setSelectedOrder] = React.useState(null);
+  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
   const [orders, setOrders] = React.useState([]);
   const [nextStatus, setNextStatus] = React.useState("");
   const [settlementModalOpen, setSettlementModalOpen] = React.useState(false);
@@ -127,12 +133,12 @@ export default function OrdersTable() {
     setIsModalOpen(true);
   };
 
-  const handleOpenSettlementModal = (order) => {
+  const handleOpenSettlementModal = (order: any) => {
     setSelectedOrderForSettlement(order); // Set the selected order for settlement
     setSettlementModalOpen(true); // Open the settlement modal
   };
 
-  const handleSettlementComplete = (settlementDetails) => {
+  const handleSettlementComplete = (settlementDetails: any) => {
     console.log("Settlement completed:", settlementDetails);
   };
 
@@ -162,7 +168,7 @@ export default function OrdersTable() {
     fetchOrders();
   }, []);
 
-  const handleUpdateStatus = async (orderId, newStatus) => {
+  const handleUpdateStatus = async (orderId: any, newStatus: any) => {
     try {
       await axios.put(
         `/v1/orders/${orderId}/${newStatus}`,
@@ -171,7 +177,6 @@ export default function OrdersTable() {
       );
       // Refresh data or notify user
       // Optionally, refresh orders list to reflect the changes
-      fetchOrders();
     } catch (error) {
       console.error("Failed to update order status", error);
     }

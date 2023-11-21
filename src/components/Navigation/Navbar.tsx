@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
+/*import React, { useRef, useState } from "react";
 import { Tabs, Menu } from "antd";
 import AccountTableView from "../../pages/Tables/AccountTableView";
-import Dashboard from "../../pages/Dashboard";
 import Home from "../../pages/Home";
 
 // Example components to render in tabs
@@ -42,7 +41,7 @@ const Navbar: React.FC = () => {
     <Menu onClick={onDropdownMenuClick} className="bg-white">
       <Menu.Item key="Accounts">Accounts View</Menu.Item>
       <Menu.Item key="Option2">Option 2</Menu.Item>
-      {/* Add more dropdown items as needed */}
+
     </Menu>
   );
 
@@ -55,7 +54,7 @@ const Navbar: React.FC = () => {
         <Menu.SubMenu key="InstrumentMenu" title="Instruments" popupOffset={[0, 0]}>
           {menu}
         </Menu.SubMenu>
-        {/* Add more navbar items as needed */}
+
       </Menu>
 
       {items.length === 0 ? (
@@ -82,3 +81,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+*/

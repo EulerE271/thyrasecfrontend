@@ -16,23 +16,52 @@ import InstrumentSelectionModal from "../Instruments/InstrumentDisplayModal"; //
 import AccountSelectionModal from "../Accounts/AccountsDisplayModal"; // Adjust the path as necessary
 import axios from "axios";
 
-const CreateOrderModal = ({ isOpen, handleClose }) => {
-  const [orderDetails, setOrderDetails] = useState({
+interface CreateOrderModalProps {
+  isOpen: boolean;
+  handleClose: () => void;
+}
+
+
+interface OrderDetails {
+  orderType: string;
+  quantity: number;
+  pricePerUnit: number;
+  totalAmount: number;
+  instrumentID: string;
+  accountID: string;
+  instrument: any;
+  account: string;
+}
+interface OrderErrors {
+  quantity?: string;
+  pricePerUnit?: string;
+  instrument?: string;
+  account?: string;
+  orderType?: any;
+}
+
+const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
+  isOpen,
+  handleClose,
+}) => {
+  const [orderDetails, setOrderDetails] = useState<OrderDetails>({
     orderType: "buy",
     quantity: 0,
     pricePerUnit: 0.0,
     totalAmount: 0.0,
     instrumentID: "",
     accountID: "",
+    instrument: "",
+    account: "",
   });
   const [error, setError] = useState("");
   const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<OrderErrors>({});
   const [isDiscrepancy, setIsDiscrepancy] = useState(false);
   const [manualTotalAmount, setManualTotalAmount] = useState(false); // New state to track if totalAmount was manually set
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     const newValue =
       name === "quantity" || name === "pricePerUnit" || name === "totalAmount"
@@ -51,7 +80,7 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: OrderErrors = {};
     if (orderDetails.quantity <= 0)
       newErrors.quantity = "Please enter a valid quantity.";
     if (orderDetails.pricePerUnit <= 0)
@@ -110,7 +139,7 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
     setIsInstrumentModalOpen(false);
   };
 
-  const handleAccountSelect = (account) => {
+  const handleAccountSelect = (account: any) => {
     setOrderDetails({
       ...orderDetails,
       account: account.account_number + " - " + account.account_name,
@@ -139,7 +168,7 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
     orderDetails.pricePerUnit,
   ]);
 
-  const handleTotalAmountChange = (e) => {
+  const handleTotalAmountChange = (e: any) => {
     setManualTotalAmount(true); // Set flag to true as totalAmount is manually changed
     setOrderDetails({ ...orderDetails, totalAmount: Number(e.target.value) });
   };
@@ -238,12 +267,12 @@ const CreateOrderModal = ({ isOpen, handleClose }) => {
       </Dialog>
       <InstrumentSelectionModal
         isOpen={isInstrumentModalOpen}
-        onClose={() => setIsInstrumentModalOpen(false)}
+        handleClose={() => setIsInstrumentModalOpen(false)}
         onSelectInstrument={handleInstrumentSelect}
       />
       <AccountSelectionModal
         isOpen={isAccountModalOpen}
-        onClose={() => setIsAccountModalOpen(false)}
+        handleClose={() => setIsAccountModalOpen(false)}
         onSelectAccount={handleAccountSelect}
       />
     </>

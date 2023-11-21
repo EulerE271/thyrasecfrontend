@@ -40,9 +40,9 @@ const NewAccountModal: React.FC<NewAccountModalProps> = ({
   const [isAccountTypesModalOpen, setIsAccountTypesModalOpen] =
     useState<boolean>(false);
   const [accountTypeName, setAccountTypeName] = useState<string>("");
-  const [AccountTypes, setAccountTypes] = useState<
+  /*const [AccountTypes, setAccountTypes] = useState<
     { id: number; transaction_type_name: string }[]
-  >([]);
+  >([]);*/
 
   const [accountNameError, setAccountNameError] = useState("");
   const [accountTypeError, setAccountTypeError] = useState("");
@@ -103,6 +103,7 @@ const NewAccountModal: React.FC<NewAccountModalProps> = ({
 
   const validateAccountType = (value: number) => {
     if (accountType === 0) {
+      console.log(value)
       setAccountTypeError("Account type is required.");
       return false;
     } else {
@@ -154,7 +155,7 @@ const NewAccountModal: React.FC<NewAccountModalProps> = ({
   };
 
   // Call validation functions on value changes
-  const handleAccountNameChange = (
+ /* const handleAccountNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value;
@@ -168,7 +169,7 @@ const NewAccountModal: React.FC<NewAccountModalProps> = ({
     const value = event.target.value;
     setAccountCurrency(value);
     validateAccountCurrency(value);
-  };
+  }; */
 
   return (
     <Dialog open={open} onClose={onClose}>

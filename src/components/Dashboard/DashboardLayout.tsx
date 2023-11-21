@@ -4,7 +4,7 @@ interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = () => {
   return (
     <div className="h-screen bg-gray-100 flex">
 

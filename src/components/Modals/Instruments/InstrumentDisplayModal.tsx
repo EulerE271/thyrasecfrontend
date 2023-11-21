@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import { List, ListItem, ListItemText } from '@mui/material';
@@ -14,12 +13,18 @@ interface InstrumentDisplayProps {
   onSelectInstrument: (instrument: any) => void;
 }
 
+interface Instrument {
+  isin: string;
+  instrument_name: string;
+  details: string;
+}
+
 const InstrumentDisplayModal: React.FC<InstrumentDisplayProps> = ({
   isOpen,
   handleClose,
   onSelectInstrument,
 }) => {
-  const [instruments, setInstruments] = useState([]);
+  const [instruments, setInstruments] = useState<Instrument[]>([]);
 
   useEffect(() => {
     if (isOpen) {

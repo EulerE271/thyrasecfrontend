@@ -21,7 +21,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     setType(showPassword ? "password" : "text");
     setShowPassword(!showPassword);
   };
-
+  console.log(type)
   return (
     <div className="flex">
       <div className="w-screen ">

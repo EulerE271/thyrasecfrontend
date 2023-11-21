@@ -1,5 +1,5 @@
 // Tabs.tsx
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { Tabs, Tab, Box, styled } from "@mui/material";
 
 // Styled components
@@ -75,3 +75,4 @@ const InstrumentTabs: React.FC = () => {
 };
 
 export default InstrumentTabs;
+*/
