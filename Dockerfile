@@ -2,9 +2,9 @@
 FROM node:14 as builder
 
 # Set the working directory
-WORKDIR /Mjölnir
+WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
 # Install dependencies
@@ -13,11 +13,16 @@ RUN npm install
 # Copy source code
 COPY . .
 
-ARG VITE_THYRA_API_URL
-
-ENV VITE_THYRA_API_URL=$VITE_THYRA_API_URL
-
 # Build the app
 RUN npm run build
 
-# No need for a second stage here since we're using shared volumes
+# Use Nginx to serve the static files
+FROM nginx:alpine
+
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+# Copy built files from the builder stage to Nginx's serve directory
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
