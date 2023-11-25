@@ -29,7 +29,7 @@ const InstrumentTypesModal: React.FC<InstrumentTypesModalProps> = ({
   useEffect(() => {
     if (open) {
       axios
-        .get("http://localhost:8084/v1/fetch/types/asset", {
+        .get("http://localhost:8082/v1/fetch/types/asset", {
           withCredentials: true,
         })
         .then((response) => {

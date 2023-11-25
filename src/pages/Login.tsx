@@ -15,7 +15,7 @@ const Login: React.FC = () => {
     };
 
     axios
-      .post('/login', requestData)
+      .post('/v1/login', requestData)
       .then((response) => {
         const token = response.data.token;
         // Set the token as an HTTP-only cookie
