@@ -3,7 +3,7 @@ import axios from "axios";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import NewTransactionModal from "./modals/CreateNewTransaction";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Menu, MenuItem } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import MoreVertIcon from "@mui/icons-material/MoreVert"; // Assuming you want a vertical menu icon
@@ -40,12 +40,11 @@ export interface Row {
 }
 
 interface BasicTableProps {
-  accountId: number;
+  accountIds: string[]; // Accepting an array of account IDs
 }
-export default function BasicTable({ accountId }: BasicTableProps) {
+export default function BasicTable({ accountIds }: BasicTableProps) {
   const [rows, setRows] = useState<Row[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { id } = useParams() as { id: string };
   const navigate = useNavigate();
 
   const columns: GridColDef[] = [
@@ -103,6 +102,12 @@ export default function BasicTable({ accountId }: BasicTableProps) {
         );
       },
     },
+    {
+      field: "account_number",
+      headerName: "Account",
+      width: 130,
+      type: "string",
+    },
     { field: "order_no", headerName: "Order number", width: 150 },
     { field: "status_label", headerName: "Status Transaction", width: 150 },
     {
@@ -133,24 +138,38 @@ export default function BasicTable({ accountId }: BasicTableProps) {
   ];
 
   useEffect(() => {
-    axios
-      .get(`/v1/user/${id}/transactions`, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        // Assuming the response.data is an array of transactions
-        setRows(
-          response.data.map((transaction: any) => ({
-            ...transaction,
-            id: transaction.id, // Already existing
-            parentDebitTransactionID: transaction.parentDebitTransactionID, // Mapping the new field
-          }))
+    const fetchTransactionsForAccount = async (accountId: string) => {
+      try {
+        const response = await axios.get(`/v1/user/${accountId}/transactions`, {
+          withCredentials: true,
+        });
+        // Ensure the response is an array and filter out non-object entries
+        return Array.isArray(response.data)
+          ? response.data.filter(
+              (item) => typeof item === "object" && item !== null
+            )
+          : [];
+      } catch (error) {
+        console.error(
+          `Error fetching transactions for account ${accountId}:`,
+          error
         );
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, [accountId]);
+        return [];
+      }
+    };
+
+    const fetchAllTransactions = async () => {
+      const allTransactions = await Promise.all(
+        accountIds.map((accountId) => fetchTransactionsForAccount(accountId))
+      );
+      // Flatten and filter out entries without an 'id' property
+      setRows(
+        allTransactions.flat().filter((item) => item.hasOwnProperty("id"))
+      );
+    };
+
+    fetchAllTransactions();
+  }, [accountIds]);
 
   const handleTransactionCreated = (newTransaction: any) => {
     setRows((prevRows) => [...prevRows, newTransaction]);
@@ -171,7 +190,6 @@ export default function BasicTable({ accountId }: BasicTableProps) {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onTransactionCreated={handleTransactionCreated}
-        userId={id}
       />
 
       <DataGrid

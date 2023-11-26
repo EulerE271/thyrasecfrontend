@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CreateAccountModal from "./modals/CreateAccountModal";
 import Button from "@mui/material/Button";
-import { useNavigate, useParams } from "react-router-dom";
-import { Menu, MenuItem } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Menu, MenuItem, IconButton } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import MoreVertIcon from "@mui/icons-material/MoreVert"; // Assuming you want a vertical menu icon
-import { IconButton } from "@mui/material";
-import axios from "axios";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 // Define the type for your account data
-interface Account {
+export interface Account {
   id: number;
   account_name: string;
   account_holder_name: string;
@@ -19,28 +17,26 @@ interface Account {
   account_owner_company: boolean;
   account_currency: string;
   account_number: string;
-  account_opening_date: string; // You may need to format this date
-  account_closing_date: string; // You may need to format this date
+  account_opening_date: string;
+  account_closing_date: string;
   account_status: string;
   interest_rate: number;
   overdraft_limit: number;
   account_description: string;
-  created_at: string; // You may need to format this timestamp
-  updated_at: string; // You may need to format this timestamp
+  created_at: string;
+  updated_at: string;
   created_by: string;
   updated_by: string;
 }
 
-interface BasicTableProps {
-  userId: number;
+interface CustomerAccountModuleProps {
+  accounts: Account[];
+  onAccountCreated: (newAccount: Account) => void;
 }
 
-const CustomerAccountModule: React.FC<BasicTableProps> = () => {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+const CustomerAccountModule: React.FC<CustomerAccountModuleProps> = ({ accounts, onAccountCreated }) => {
   const [isAccountModalOpen, setAccountModalOpen] = useState(false);
-  const { id } = useParams();
   const navigate = useNavigate();
-
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -111,25 +107,10 @@ const CustomerAccountModule: React.FC<BasicTableProps> = () => {
     // Add other columns as necessary
   ];
 
-  useEffect(() => {
-    axios
-      .get(`/v1/user/${id}/accounts`, { withCredentials: true })
-      .then((response) => {
-        const data = response.data;
-        if (Array.isArray(data)) {
-          setAccounts(data);
-        } else {
-          console.error("Received data is not an array:", data);
-          setAccounts([]); // Set to an empty array if the data is not in the expected format
-        }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, [id]);
-
   const handleAccountCreated = (newAccount: Account) => {
-    setAccounts((prevAccounts) => [...prevAccounts, newAccount]);
+    onAccountCreated(newAccount);
   };
-
+  
   return (
     <div>
       <Button
@@ -150,8 +131,7 @@ const CustomerAccountModule: React.FC<BasicTableProps> = () => {
       <DataGrid
         rows={accounts}
         columns={columns}
-        getRowId={(row) => row.uuid} // Use the 'uuid' property as the unique identifier
-        // You may want to add sorting and filtering options here
+        getRowId={(row) => row.id} // Adjust this if your accounts have a unique identifier
       />
     </div>
   );

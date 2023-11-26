@@ -39,7 +39,7 @@ export default function DataTable() {
             </IconButton>
             <IconButton
               aria-label="info"
-              onClick={() => navigate(`/user/${params.row.uuid}`)}
+              onClick={() => navigate(`/user/${params.row.id}`)}
             >
               <InfoIcon />
             </IconButton>
@@ -132,7 +132,7 @@ export default function DataTable() {
             },
           }}
           checkboxSelection
-          getRowId={(row) => row.uuid} // Use the 'uuid' property as the unique identifier
+          getRowId={(row) => row.id} // Use the 'uuid' property as the unique identifier
         />
       </div>
     </ThemeProvider>

@@ -143,7 +143,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     setOrderDetails({
       ...orderDetails,
       account: account.account_number + " - " + account.account_name,
-      accountID: account.uuid, // assuming the UUID field is named 'uuid'
+      accountID: account.id, // assuming the UUID field is named 'uuid'
     });
     setIsAccountModalOpen(false);
   };

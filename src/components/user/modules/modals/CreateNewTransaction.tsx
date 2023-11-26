@@ -13,9 +13,10 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 interface Account {
-  uuid: string; // Adjust according to your account ID type
+  id: string; // Adjust according to your account ID type
   account_name: string;
   account_number: string;
   account_balance: number;
@@ -24,7 +25,6 @@ interface Account {
 
 interface NewTransactionModalProps {
   open: boolean;
-  userId: string;
   onClose: () => void;
   onTransactionCreated: (newTransaction: {
     ParentCreditTransactionID: string;
@@ -38,7 +38,6 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
   open,
   onClose,
   onTransactionCreated,
-  userId,
 }) => {
   const [transactionType, setTransactionType] = useState("");
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -55,12 +54,12 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
   const [amountError, setAmountError] = useState("");
   const [transactionDateError, setTransactionDateError] = useState("");
   const [valueDateError, setValueDateError] = useState("");
-
-
+  const {id} = useParams();
+  console.log(id)
   useEffect(() => {
     if (open) {
       axios
-        .get(`v1/user/${userId}/accounts`, {
+        .get(`v1/user/${id}/accounts`, {
           withCredentials: true,
         })
         .then((response) => {
@@ -71,7 +70,7 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
           setError("Failed to fetch accounts");
         });
     }
-  }, [userId, open]);
+  }, [id, open]);
 
   useEffect(() => {
     if (open) {
@@ -116,8 +115,8 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
       .post(
         `v1${endpoint}`, // Use the dynamic endpoint
         {
-          transaction_owner_id: userId,
-          account_owner_id: userId,
+          transaction_owner_id: id,
+          account_owner_id: selectedAccount,
           type: transactionTypeId,
           account_asset1_id: "6180267d-06e5-4ca5-833b-7e4980ecc4e1",
           account_asset2_id: selectedAccount,
@@ -182,7 +181,7 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
 
   const validateAmount = (value: string) => {
     const num = parseFloat(value);
-    const selectedAcc = accounts.find((acc) => acc.uuid === selectedAccount);
+    const selectedAcc = accounts.find((acc) => acc.id === selectedAccount);
   
     if (isNaN(num) || num <= 0) {
       setAmountError("Amount must be a positive number.");
@@ -263,7 +262,7 @@ const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
           >
             {accounts && accounts.length > 0 ? (
               accounts.map((account) => (
-                <MenuItem key={account.uuid} value={account.uuid}>
+                <MenuItem key={account.id} value={account.id}>
                   {account.account_number} - {account.account_name} -{" "}
                   {account.account_currency} {account.account_balance}
                 </MenuItem>
