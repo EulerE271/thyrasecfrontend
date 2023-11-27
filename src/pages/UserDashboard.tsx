@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Container, Grid, Paper } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 import PerformanceGraph from "../components/graphs/PerformanceGraph";
 import CustomerAccountModule, {
   Account,
@@ -57,7 +63,17 @@ const UserDashboard: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={8} lg={9}>
+          <Card variant="outlined" sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Performance Overview
+              </Typography>
+              <PerformanceGraph />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={4} lg={3}>
           {aggregatedData && (
             <AccountSummary
               totalValue={aggregatedData.TotalValue}
@@ -66,20 +82,35 @@ const UserDashboard: React.FC = () => {
               availableCash={aggregatedData.AvailableCash}
             />
           )}
-          <Paper>
-            <PerformanceGraph />
-          </Paper>
         </Grid>
         <Grid item xs={12}>
-          <Paper>
-            <CustomerAccountModule
-              accounts={accounts}
-              onAccountCreated={handleAccountCreated}
-            />
-            <CustomerTransactionModule accountIds={accountIds} />{" "}
-            {/* Pass account IDs */}
-            <CustomerPositionModule accounts={accounts} />
-          </Paper>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Account Details
+              </Typography>
+              <CustomerAccountModule
+                accounts={accounts}
+                onAccountCreated={handleAccountCreated}
+              />
+            </CardContent>
+          </Card>
+          <Card variant="outlined" sx={{ mt: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Transactions
+              </Typography>
+              <CustomerTransactionModule accountIds={accountIds} />
+            </CardContent>
+          </Card>
+          <Card variant="outlined" sx={{ mt: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Positions
+              </Typography>
+              <CustomerPositionModule accounts={accounts} />
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Container>

@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AiOutlineCaretDown, AiOutlineCaretUp, AiOutlineHome, AiOutlineUser, AiOutlineBook, AiOutlineTransaction, AiOutlineBarChart, AiOutlineShoppingCart } from "react-icons/ai"; // Example icon imports
 
 interface DropdownItemProps {
   title: string;
   items: string[];
+  icon: React.ElementType; // New property for the icon component
 }
 
 const DropdownItem: React.FC<DropdownItemProps & { route?: string }> = ({
   title,
   items,
+  icon: Icon, // Destructure and rename for JSX
   route,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,31 +25,41 @@ const DropdownItem: React.FC<DropdownItemProps & { route?: string }> = ({
   };
 
   return (
-    <li className="mb-2 relative group">
+    <li className="mb-1">
       <button
-        className="w-full text-left hover:bg-blue-500 px-2 py-1 rounded flex justify-between items-center"
+        aria-expanded={isOpen}
+        className="w-full text-left hover:bg-gray-300 bg-gray-200 px-3 py-2 rounded flex items-center transition duration-150 ease-in-out"
         onClick={handleNavigationAndToggle}
       >
+        <Icon className="mr-2" /> {/* Icon */}
         {title}
-        <span>{isOpen ? "▲" : "▼"}</span>
+        <span className="ml-auto">{isOpen ? <AiOutlineCaretUp /> : <AiOutlineCaretDown />}</span>
       </button>
-      <ul className={`dropdown-content ${isOpen ? "open" : ""}`}>
-        {items.map((item) => (
-          <li key={item} className="hover:bg-gray-200 px-2 py-1">
-            {item}
-          </li>
-        ))}
-      </ul>
+      {isOpen && (
+        <ul className="pl-6 mt-1">
+          {items.map((item) => (
+            <li key={item} className="hover:bg-gray-300 py-1 transition duration-150 ease-in-out">
+              <button
+                className="w-full text-left text-gray-700"
+                onClick={() => navigate(item)}
+              >
+                {item}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 };
 
 interface SidebarItemProps {
   title: string;
-  route?: string; // <-- Add this
+  icon: React.ElementType; // New property for the icon component
+  route?: string;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ title, route }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({ title, icon: Icon, route }) => { // Destructure and rename for JSX
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = location.pathname === route;
@@ -57,11 +70,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ title, route }) => {
     }
   };
 
-  const activeClass = isActive ? "bg-slate-700" : "";
-  const itemClass = `mb-2 hover:bg-gray-500 w-full text-white px-2 py-1 ${activeClass}`;
+  const activeClass = isActive ? "bg-gray-300" : "";
+  const itemClass = `mb-1 hover:bg-gray-300 w-full text-gray-700 px-3 py-2 rounded flex items-center transition duration-150 ease-in-out ${activeClass}`;
 
   return (
     <li className={itemClass} onClick={handleNavigation}>
+      <Icon className="mr-2" /> {/* Icon */}
       {title}
     </li>
   );
@@ -69,29 +83,31 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ title, route }) => {
 
 interface MenuItem {
   title: string;
+  icon: React.ElementType; // New property for the icon component
   dropdownItems?: string[];
-  route?: string; // <-- Add this
+  route?: string;
 }
 
 const Sidebar = () => {
   const menuItems: MenuItem[] = [
-    { title: "Dashboard", route: "/home" }, // example
+    { title: "Dashboard", icon: AiOutlineHome, route: "/home" },
     {
       title: "User Management",
+      icon: AiOutlineUser,
       dropdownItems: ["Add User", "List Users"],
       route: "/users",
     },
-    { title: "Accounts", route: "/accounts" }, // example
-    { title: "Transactions", route: "/transactions" }, // example
-    { title: "Instruments", route: "/instruments" }, // example
-    { title: "Orders", route: "/orders" },
-    // ... add more menu items with their respective routes
+    { title: "Accounts", icon: AiOutlineBook, route: "/accounts" },
+    { title: "Transactions", icon: AiOutlineTransaction, route: "/transactions" },
+    { title: "Instruments", icon: AiOutlineBarChart, route: "/instruments" },
+    { title: "Orders", icon: AiOutlineShoppingCart, route: "/orders" },
+    // ... add more menu items with their respective icons and routes
   ];
 
   return (
-    <aside className="w-64 bg-slate-800 text-white shadow-lg">
+    <aside className="w-64 bg-gray-100 text-gray-700 shadow p-4">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold">Thyra Securities</h1>
+        <h1 className="text-xl font-semibold text-center">Thyra Securities</h1>
       </div>
       <ul>
         {menuItems.map((item) =>
@@ -100,12 +116,14 @@ const Sidebar = () => {
               key={item.title}
               title={item.title}
               items={item.dropdownItems}
-              route={item.route} // <-- this was missing
+              icon={item.icon}
+              route={item.route}
             />
           ) : (
             <SidebarItem
               key={item.title}
               title={item.title}
+              icon={item.icon}
               route={item.route}
             />
           )
