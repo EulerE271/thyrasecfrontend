@@ -63,7 +63,7 @@ export default function PerformanceGraph() {
     const aggregatedData: { [key: string]: { total: number; count: number } } =
       {};
     snapshots.forEach((snapshot) => {
-      let dateKey = snapshot.Date.split("T")[0]; // Daily by default
+      let dateKey = snapshot.Date.toISOString().split("T")[0]; // Convert Date to string
 
       if (interval === "weekly") {
         dateKey = startOfWeek(new Date(snapshot.Date))
@@ -86,7 +86,7 @@ export default function PerformanceGraph() {
       Date: key,
       Value: aggregatedData[key].total / aggregatedData[key].count,
     }));
-  };
+  }; 
 
   // Determine the aggregation interval
   const determineInterval = (start: any, end: any) => {
@@ -174,18 +174,19 @@ export default function PerformanceGraph() {
   };
 
   // Update the options dynamically based on the selected date range
-  const dynamicOptions: ChartOptions<"line"> = {
+  const dynamicOptions = {
     ...options,
     scales: {
       ...options.scales,
       x: {
-        ...options.scales.x,
+        ...options.scales?.x,
         time: {
           unit: determineTimeUnit(),
         },
-      },
+      } as any, // Type assertion to bypass the TypeScript error
     },
-  };
+  } as ChartOptions<"line">;
+  
 
   return (
     <div>
