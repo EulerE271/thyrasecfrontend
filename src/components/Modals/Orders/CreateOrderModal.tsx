@@ -15,12 +15,12 @@ import {
 import InstrumentSelectionModal from "../Instruments/InstrumentDisplayModal"; // Adjust the path as necessary
 import AccountSelectionModal from "../Accounts/AccountsDisplayModal"; // Adjust the path as necessary
 import axios from "axios";
+import { DatePicker } from "antd";
 
 interface CreateOrderModalProps {
   isOpen: boolean;
   handleClose: () => void;
 }
-
 
 interface OrderDetails {
   orderType: string;
@@ -28,9 +28,12 @@ interface OrderDetails {
   pricePerUnit: number;
   totalAmount: number;
   instrumentID: string;
+  userID: string;
   accountID: string;
   instrument: any;
   account: string;
+  settlemenDate: string;
+  tradeDate: string;
 }
 interface OrderErrors {
   quantity?: string;
@@ -47,12 +50,15 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
   const [orderDetails, setOrderDetails] = useState<OrderDetails>({
     orderType: "buy",
     quantity: 0,
+    userID: "",
     pricePerUnit: 0.0,
     totalAmount: 0.0,
     instrumentID: "",
     accountID: "",
     instrument: "",
     account: "",
+    settlemenDate: "",
+    tradeDate: "",
   });
   const [error, setError] = useState("");
   const [isInstrumentModalOpen, setIsInstrumentModalOpen] = useState(false);
@@ -93,6 +99,10 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  const formatDateToISO8601 = (dateString) => {
+    return new Date(dateString).toISOString();
+  }
+
   const handleFormSubmit = async () => {
     if (validateForm()) {
       console.log(orderDetails);
@@ -109,6 +119,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         const response = await axios.post(
           `v1/orders/create/${endpoint}`,
           {
+            owner_id : orderDetails.userID,
             account_id: orderDetails.accountID,
             asset_id: orderDetails.instrumentID,
             order_type: orderDetails.orderType,
@@ -116,6 +127,8 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
             price_per_unit: Number(orderDetails.pricePerUnit),
             total_amount: orderDetails.quantity * orderDetails.pricePerUnit,
             status: "created",
+            trade_date: formatDateToISO8601(orderDetails.tradeDate),
+            settlementDate: formatDateToISO8601(orderDetails.settlemenDate),
           },
           { withCredentials: true }
         );
@@ -144,7 +157,9 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       ...orderDetails,
       account: account.account_number + " - " + account.account_name,
       accountID: account.id, // assuming the UUID field is named 'uuid'
+      userID: account.account_holder_id,
     });
+    console.log(orderDetails)
     setIsAccountModalOpen(false);
   };
 
@@ -172,6 +187,11 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     setManualTotalAmount(true); // Set flag to true as totalAmount is manually changed
     setOrderDetails({ ...orderDetails, totalAmount: Number(e.target.value) });
   };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>, name: string) => {
+    setOrderDetails({ ...orderDetails, [name]: e.target.value });
+  };
+
 
   return (
     <>
@@ -258,6 +278,48 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
             value={orderDetails.account}
             onClick={() => setIsAccountModalOpen(true)}
             InputProps={{ readOnly: true }}
+          />
+          <TextField
+            error={!!errors.tradeDate}
+            helperText={errors.tradeDate}
+            margin="dense"
+            name="tradeDate"
+            label="Trade Date"
+            type="date"
+            fullWidth
+            variant="outlined"
+            value={orderDetails.tradeDate}
+            onChange={(e) => handleDateChange(e, "tradeDate")}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+
+          <TextField
+            error={!!errors.settlementDate}
+            helperText={errors.settlementDate}
+            margin="dense"
+            name="settlemenDate"
+            label="Settlement Date"
+            type="date"
+            fullWidth
+            variant="outlined"
+            value={orderDetails.settlemenDate}
+            onChange={(e) => handleDateChange(e, "settlemenDate")}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            error={!!errors.comment}
+            helperText={errors.comment}
+            margin="dense"
+            name="comment"
+            label="Comment"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={orderDetails.comment}
           />
         </DialogContent>
         <DialogActions>

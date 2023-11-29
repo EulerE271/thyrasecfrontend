@@ -15,6 +15,7 @@ interface AccountDisplayProps {
 
 interface Account {
   account_number: string;
+  accont_holder_id: string;
   account_name: string;
 }
 

@@ -21,6 +21,8 @@ interface SettlementModalProps {
     status: string;
     instrument_name: string;
     instrument_type: string;
+    tradeDate: string;
+    settlementDate: string;
     account_number: string;
   } | null; // Allow null for safety
   onClose: () => void;
@@ -33,17 +35,19 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
   onClose,
   onSettlementComplete,
 }) => {
-    const [pricePerUnit, setPricePerUnit] = useState('')
+  const [pricePerUnit, setPricePerUnit] = useState("");
   const [quantity, setQuantity] = useState("");
   const [amount, setAmount] = useState("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
+  const [tradeDate, setTradeDate] = useState("");
+  const [settlementDate, setSettlementDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [amountMismatchWarning, setAmountMismatchWarning] = useState(false);
 
   useEffect(() => {
     if (open && order) {
-      setPricePerUnit(order.price_per_unit.toString())
+      setPricePerUnit(order.price_per_unit.toString());
       setQuantity(order.quantity.toString()); // Set initial quantity
       setAmount(order.total_amount.toString()); // Set initial amount
       setComment(""); // Reset comment when modal opens
@@ -62,6 +66,8 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
     const payload = {
       orderId: order.id,
       status: order.status,
+      settlementDate: order.settlementDate,
+      tradeDate: order.tradeDate,
       quantity: parseFloat(quantity),
       amount: parseFloat(amount),
       comment: comment,
@@ -83,20 +89,24 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
   };
 
   useEffect(() => {
-    const calculatedAmount = parseFloat(pricePerUnit) * parseFloat(quantity)
+    const calculatedAmount = parseFloat(pricePerUnit) * parseFloat(quantity);
 
     if (calculatedAmount !== parseFloat(amount)) {
-        setAmountMismatchWarning(true)
+      setAmountMismatchWarning(true);
     } else {
-        setAmountMismatchWarning(false)
+      setAmountMismatchWarning(false);
     }
-  }, [amount, quantity, pricePerUnit])
+  }, [amount, quantity, pricePerUnit]);
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Settle Order</DialogTitle>
       <DialogContent>
-      {amountMismatchWarning && <Alert sx={{marginBottom: 2}} severity="warning">The amount does not equal Price * Quantity</Alert> }
+        {amountMismatchWarning && (
+          <Alert sx={{ marginBottom: 2 }} severity="warning">
+            The amount does not equal Price * Quantity
+          </Alert>
+        )}
 
         <TextField
           margin="dense"
@@ -127,11 +137,39 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
         />
         <TextField
           margin="dense"
+          name="tradeDate"
+          label="Trade Date"
+          type="date"
+          fullWidth
+          variant="outlined"
+          value={tradeDate}
+          onChange={(e) => setTradeDate(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+
+        <TextField
+          margin="dense"
+          name="settlemenDate"
+          label="Settlement Date"
+          type="date"
+          fullWidth
+          variant="outlined"
+          value={settlementDate}
+          onChange={(e) => setSettlementDate(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          margin="dense"
           label="Comment"
           fullWidth
           variant="outlined"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
+          
         />
         {error && <p style={{ color: "red" }}>{error}</p>}
       </DialogContent>

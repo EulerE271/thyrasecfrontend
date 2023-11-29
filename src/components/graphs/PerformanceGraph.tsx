@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 import "chartjs-adapter-date-fns";
 import { useParams } from "react-router-dom";
 import { ChartOptions } from "chart.js";
+import { differenceInDays, startOfWeek, startOfMonth } from "date-fns";
 
 Chart.register(...registerables);
 
@@ -22,7 +23,7 @@ export const options: ChartOptions<"line"> = {
     x: {
       type: "time",
       time: {
-        unit: "month",
+        unit: "day",
       },
       title: {
         display: true,
@@ -57,6 +58,48 @@ export default function PerformanceGraph() {
     }[];
   }>({ labels: [], datasets: [] });
   const { id } = useParams();
+
+  const averageDataPoints = (snapshots: Snapshots[], interval: string) => {
+    const aggregatedData: { [key: string]: { total: number; count: number } } =
+      {};
+    snapshots.forEach((snapshot) => {
+      let dateKey = snapshot.Date.split("T")[0]; // Daily by default
+
+      if (interval === "weekly") {
+        dateKey = startOfWeek(new Date(snapshot.Date))
+          .toISOString()
+          .split("T")[0];
+      } else if (interval === "monthly") {
+        dateKey = startOfMonth(new Date(snapshot.Date))
+          .toISOString()
+          .split("T")[0];
+      }
+
+      if (!aggregatedData[dateKey]) {
+        aggregatedData[dateKey] = { total: 0, count: 0 };
+      }
+      aggregatedData[dateKey].total += snapshot.Value;
+      aggregatedData[dateKey].count += 1;
+    });
+
+    return Object.keys(aggregatedData).map((key) => ({
+      Date: key,
+      Value: aggregatedData[key].total / aggregatedData[key].count,
+    }));
+  };
+
+  // Determine the aggregation interval
+  const determineInterval = (start: any, end: any) => {
+    const dayDifference = differenceInDays(end, start);
+    if (dayDifference <= 30) {
+      return "daily";
+    } else if (dayDifference <= 365) {
+      return "weekly";
+    } else {
+      return "monthly";
+    }
+  };
+
   // Function to fetch data from the backend
   const fetchData = async (start: Date | null, end: Date | null) => {
     if (!start || !end) {
@@ -74,11 +117,14 @@ export default function PerformanceGraph() {
 
       const responseData = response.data;
       // Extracting snapshot data
-      const snapshotData = responseData.Snapshots || [];
-      const labels = snapshotData.map(
-        (snapshot: Snapshots) => snapshot.Date.split("T")[0]
+      const interval = determineInterval(start, end);
+      const aggregatedData = averageDataPoints(
+        responseData.Snapshots,
+        interval
       );
-      const values = snapshotData.map((snapshot: Snapshots) => snapshot.Value);
+
+      const labels = aggregatedData.map((item) => item.Date);
+      const values = aggregatedData.map((item) => item.Value);
 
       // Since the response is a single object, directly use its properties
       setChartData({
@@ -103,6 +149,44 @@ export default function PerformanceGraph() {
     fetchData(startDate, endDate);
   }, [startDate, endDate]);
 
+  const determineTimeUnit = () => {
+    if (!startDate || !endDate) return "month";
+
+    const startMonth = startDate.getMonth();
+    const endMonth = endDate.getMonth();
+    const startYear = startDate.getFullYear();
+    const endYear = endDate.getFullYear();
+
+    // Check if the dates are in the same year and either the same month or adjacent months
+    if (
+      startYear === endYear &&
+      (endMonth === startMonth || endMonth === startMonth + 1)
+    ) {
+      return "day";
+    } else if (
+      startYear === endYear ||
+      (startYear + 1 === endYear && startMonth >= endMonth)
+    ) {
+      return "month";
+    } else {
+      return "year";
+    }
+  };
+
+  // Update the options dynamically based on the selected date range
+  const dynamicOptions: ChartOptions<"line"> = {
+    ...options,
+    scales: {
+      ...options.scales,
+      x: {
+        ...options.scales.x,
+        time: {
+          unit: determineTimeUnit(),
+        },
+      },
+    },
+  };
+
   return (
     <div>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -123,7 +207,7 @@ export default function PerformanceGraph() {
           }}
         />
       </LocalizationProvider>
-      <Line options={options} data={chartData} />
+      <Line options={dynamicOptions} data={chartData} />
     </div>
   );
 }
