@@ -1,6 +1,6 @@
 // MainLayout.tsx
 import React from "react";
-import { useLocation } from "react-router-dom";
+//import { useLocation } from "react-router-dom";
 import Sidebar from "../Navigation/Sidebar";
 
 interface MainLayoutProps {
@@ -8,8 +8,8 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const location = useLocation();
-  const showInstrumentTabs = location.pathname.includes("/instruments");
+  //const location = useLocation();
+  //const showInstrumentTabs = location.pathname.includes("/instruments");
   return (
     <div className="flex w-screen min-h-screen">
       {/* Sidebar */}
