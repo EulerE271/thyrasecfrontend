@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './pages/Login';
+import Login from './Pages/Login';
 import "./App.css"
-import Dashboard from './pages/Dashboard';
-import PrivateRoute from './components/utils/PrivateRoute';
-import UserDashboard from './pages/UserDashboard';
-import Home from './pages/Home'
-import UserTableView from './pages/Tables/UserTableView';
-import MainLayout from './components/Layouts/MainLayout';
-import AccountTableView from './pages/Tables/AccountTableView';
-import TransactionTableView from './pages/Tables/TransactionTableView';
-import InstrumentTableView from './pages/Tables/InstrumentTableView';
-import OrderTableView from './pages/Tables/OrderTableView';
+import Dashboard from './Pages/Dashboard';
+import PrivateRoute from './Components/utils/PrivateRoute';
+import UserDashboard from './Pages/UserDashboard';
+import Home from './Pages/Home'
+import UserTableView from './Pages/TablePages/UserTableView';
+import MainLayout from './Components/Layouts/MainLayout';
+import AccountTableView from './Pages/TablePages/AccountTableView';
+import TransactionTableView from './Pages/TablePages/TransactionTableView';
+import InstrumentTableView from './Pages/TablePages/InstrumentTableView';
+import OrderTableView from './Pages/TablePages/OrderTableView';
 
 const App = () => {
   return (
