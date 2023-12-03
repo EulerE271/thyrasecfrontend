@@ -1,7 +1,7 @@
 // src/pages/Home.tsx
 
 import React from 'react';
-import InstrumentTable from '../../Components/Views/UserPage/Tables/InstrumentTable';
+import InstrumentTable from '../../Instruments/components/tables/InstrumentTable';
 
 const InstrumentTableView: React.FC = () => {
   return (

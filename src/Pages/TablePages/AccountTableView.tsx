@@ -1,7 +1,7 @@
 // src/pages/Home.tsx
 
 import React from 'react';
-import AccountTableSort from '../../Components/Views/UserPage/Tables/AccountTableSort';
+import AccountTableSort from '../../accounts/components/tables/AccountTableSort';
 
 const AccountTableView: React.FC = () => {
   return (

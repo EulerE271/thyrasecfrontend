@@ -9,12 +9,12 @@ import {
 import PerformanceGraph from "../Components/Graphs/PerformanceGraph";
 import CustomerAccountModule, {
   Account,
-} from "../Components/Views/UserPage/Forms/Accounts/CustomerAccountModule";
-import CustomerTransactionModule from "../Components/Views/UserPage/Forms/Transactions/CustomerTransactionModule";
-import CustomerPositionModule from "../Components/Views/UserPage/Forms/Positions/CustomerPositionModule";
+} from "../accounts/components/tables/CustomerAccountModule";
+import CustomerTransactionModule from "../transactions/components/tables/CustomerTransactionModule";
+import CustomerPositionModule from "../positions/components/tables/CustomerPositionModule";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import AccountSummary from "../Components/Views/UserPage/Modules/Summary/AccountSummary";
+import AccountSummary from "../accounts/components/tables/AccountSummary";
 
 type AggregatedAccountData = {
   TotalValue: number;

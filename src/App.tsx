@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './Pages/Login';
 import "./App.css"
 import Dashboard from './Pages/Dashboard';
-import PrivateRoute from './Components/utils/PrivateRoute';
+import PrivateRoute from './common/utils/PrivateRoute';
 import UserDashboard from './Pages/UserDashboard';
 import Home from './Pages/Home'
 import UserTableView from './Pages/TablePages/UserTableView';

@@ -1,7 +1,7 @@
 // src/pages/Home.tsx
 
 import React from 'react';
-import TransactionTable from '../../Components/Views/UserPage/Tables/TransactionTable';
+import TransactionTable from '../../transactions/components/tables/TransactionTable';
 
 const TransactionTableView: React.FC = () => {
   return (

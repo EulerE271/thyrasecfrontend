@@ -1,8 +1,8 @@
 // src/pages/Home.tsx
 
 import React, { useState } from "react";
-import OrdersTable from "../../Components/Tables/Orders/OrderTable";
-import CreateOrderModal from "../../Components/Modals/Orders/Modal/CreateOrder/CreateOrderModal";
+import OrdersTable from "../../orders/components/tables/OrderTable";
+import CreateOrderModal from "../../orders/components/forms/CreateOrderModal";
 import { Button } from "@mui/material";
 
 const OrderTableView: React.FC = () => {
