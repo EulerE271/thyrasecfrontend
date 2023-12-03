@@ -6,7 +6,7 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import PerformanceGraph from "../Components/Graphs/PerformanceGraph";
+import PerformanceGraph from "../analytics/components/performance/PerformanceGraph";
 import CustomerAccountModule, {
   Account,
 } from "../accounts/components/tables/CustomerAccountModule";

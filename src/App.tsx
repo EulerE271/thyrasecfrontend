@@ -6,7 +6,7 @@ import PrivateRoute from './common/utils/PrivateRoute';
 import UserDashboard from './Pages/UserDashboard';
 import Home from './Pages/Home'
 import UserTableView from './Pages/TablePages/UserTableView';
-import MainLayout from './Components/Layouts/MainLayout';
+import MainLayout from '../src/common/utils/MainLayout';
 import AccountTableView from './Pages/TablePages/AccountTableView';
 import TransactionTableView from './Pages/TablePages/TransactionTableView';
 import InstrumentTableView from './Pages/TablePages/InstrumentTableView';
