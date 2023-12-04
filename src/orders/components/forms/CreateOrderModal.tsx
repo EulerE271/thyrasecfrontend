@@ -63,7 +63,8 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
   const [errors, setErrors] = useState<OrderErrors>({});
   const [isDiscrepancy, setIsDiscrepancy] = useState(false);
   const [manualTotalAmount, setManualTotalAmount] = useState(false); // New state to track if totalAmount was manually set
-
+  const [orderTypeID, setOrderTypeID] = useState("");
+  console.log(orderTypeID)
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     const newValue =
@@ -98,25 +99,40 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
 
   const handleFormSubmit = async () => {
     if (validateForm()) {
-      console.log(orderDetails);
       let endpoint = "";
-      if (orderDetails.orderType == "buy") {
+      let orderTypeIDResponse;
+  
+      if (orderDetails.orderType === "buy") {
         endpoint = "buy";
-      } else if (orderDetails.orderType == "sell") {
+        try {
+          orderTypeIDResponse = await axios.get("/v1/orders/type/name?name=order_type_buy", { withCredentials: true });
+          setOrderTypeID(orderTypeIDResponse.data.order_type_id);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+          setError(errorMessage);          return; // Exit the function if there's an error
+        }
+      } else if (orderDetails.orderType === "sell") {
         endpoint = "sell";
+        try {
+          orderTypeIDResponse = await axios.get("/v1/orders/type/name?name=order_type_sell", { withCredentials: true });
+          setOrderTypeID(orderTypeIDResponse.data.order_type_id);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+          setError(errorMessage);          return; // Exit the function if there's an error
+        }
       } else {
-        console.log("undefined ordertyp");
+        console.log("undefined ordertype");
+        return; // Exit the function if orderType is not defined
       }
-
+  
       try {
         const response = await axios.post(
           `v1/orders/create/${endpoint}`,
           {
-            //Id is set on the backend
             owner_id: orderDetails.userID,
             account_id: orderDetails.accountID,
             asset_id: orderDetails.instrumentID,
-            order_type: orderDetails.orderType,
+            order_type: orderTypeIDResponse.data.order_type_id,
             quantity: Number(orderDetails.quantity),
             price_per_unit: Number(orderDetails.pricePerUnit),
             total_amount: orderDetails.quantity * orderDetails.pricePerUnit,
@@ -124,7 +140,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           },
           { withCredentials: true }
         );
-
+  
         if (response.data) {
           handleClose();
         }
@@ -134,6 +150,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       }
     }
   };
+  
 
   const handleInstrumentSelect = (instrument: any) => {
     setOrderDetails({
