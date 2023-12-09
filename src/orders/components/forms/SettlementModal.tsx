@@ -44,7 +44,6 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
   const [settlementDate, setSettlementDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [amountMismatchWarning, setAmountMismatchWarning] = useState(false);
-
   useEffect(() => {
     if (open && order) {
       setPricePerUnit(order.price_per_unit.toString());
@@ -54,6 +53,7 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
       setTradeDate(order.tradeDate); // Set initial trade date
       setSettlementDate(order.settlementDate); // Set initial settlement date
     }
+
   }, [open, order]);
 
   const handleSettleOrder = () => {
@@ -79,8 +79,15 @@ const SettlementModal: React.FC<SettlementModalProps> = ({
       comment: comment,
     };
 
+    var endPoint = ""
+    if (order.order_type == "ca271242-eb64-46ff-bb7e-8d15a80db4d9") {
+      endPoint = "buy" 
+    } else {
+      endPoint = "sell"
+    }
+
     axios
-      .put(`v1/orders/${order.id}/settle`, payload, { withCredentials: true })
+      .put(`v1/orders/${order.id}/settle/${endPoint}`, payload, { withCredentials: true })
       .then((response) => {
         onSettlementComplete(response.data);
         onClose();

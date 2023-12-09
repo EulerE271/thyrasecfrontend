@@ -47,7 +47,6 @@ export default function OrdersTable() {
         };
 
         let additionalMenuItem;
-        if (params.row.order_type === "ca271242-eb64-46ff-bb7e-8d15a80db4d9") {
           switch (params.row.status) {
             case "created":
               additionalMenuItem = (
@@ -76,7 +75,6 @@ export default function OrdersTable() {
               break;
             default:
               additionalMenuItem = null;
-          }
         }
 
         return (
